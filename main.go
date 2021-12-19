@@ -20,6 +20,8 @@ func main() {
 			continue
 		}
 		go s.newClient(conn)
+		go s.run()
+
 	}
 
 }
