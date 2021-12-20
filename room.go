@@ -1,6 +1,9 @@
 package main
 
-import "net"
+import (
+	"fmt"
+	"net"
+)
 
 type room struct {
 	member map[net.Addr]*client
@@ -10,8 +13,7 @@ type room struct {
 func (r *room) broadcast(sender *client, msg string) {
 	for ip, m := range r.member {
 		if sender.conn.RemoteAddr() != ip {
-			m.msg(msg)
+			m.msg(fmt.Sprintf("from %s :", sender.nick) + msg)
 		}
 	}
-
 }

@@ -37,6 +37,8 @@ func (s *server) run() {
 			s.join(cmd.client, cmd.args)
 		case CMD_MSG:
 			s.msg(cmd.client, cmd.args)
+		case CMD_QUIT:
+			s.quit(cmd.client)
 		}
 	}
 }
@@ -59,7 +61,18 @@ func (s *server) join(c *client, arg []string) {
 	r.member[c.conn.RemoteAddr()] = c
 	c.room = r
 	fmt.Println(r.member)
+
 }
 func (s *server) msg(c *client, arg []string) {
 	c.room.broadcast(c, arg[1])
+}
+func (s *server) quit(c *client) {
+	if c.room != nil {
+		c.msg("see you next time")
+		old_room := s.rooms[c.room.name]
+		delete(s.rooms[c.room.name].member, c.conn.RemoteAddr())
+		old_room.broadcast(c, fmt.Sprintf("%s has left us", c.nick))
+
+	}
+	c.conn.Close()
 }
